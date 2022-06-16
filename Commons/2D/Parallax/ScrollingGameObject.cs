@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace voidling {
 	[Serializable]
-	public class ScrollingItem {
+	public class ScrollingGameObject {
 		[SerializeField] private GameObject item;
 		[SerializeField] private int bufferSize = 1;
 		[SerializeField] private int backBufferSize = 1;
@@ -15,14 +15,14 @@ namespace voidling {
 		private Vector2 _bounds;
 		private Vector3 _startingPoint;
 		private GameObject[] _itemBuffer;
-		private Transform transform;
+		private Transform _transform;
 		
 		// the middle Idx is the item after the middle one
 		private int nextInLine => backBufferSize;
 		private int bufferLen => backBufferSize + 1 + bufferSize;
 
 		public void Start(Transform parent) {
-			transform = parent;
+			_transform = parent;
 			_bounds = item.GetComponent<Renderer>().bounds.size;
 			CreateBuffer();
 		}
@@ -52,13 +52,13 @@ namespace voidling {
 			_itemBuffer[bufferLen - 1] = first;
 		}
 
-		public void Update() {
+		public void OnUpdate() {
 			MoveTiles();
 		}
 
 		private void MoveTiles() {
 			foreach (var item in _itemBuffer) {
-				item.transform.Translate(Vector3.left * (scrollSpeed * Time.deltaTime));
+				item.transform.Translate(Vector3.left * (scrollSpeed * Time.deltaTime), _transform);
 			}
 		}
 
@@ -84,10 +84,8 @@ namespace voidling {
 			Vector3 pos = item.transform.position;
 			pos.x += _bounds.x * offset;
 			
-			var obj = GameObject.Instantiate(item.gameObject, pos, Quaternion.identity);
-			obj.transform.SetParent(transform);
-			
-			//obj.transform.Translate(pos);
+			var obj = GameObject.Instantiate(item.gameObject, pos, item.transform.rotation);
+			obj.transform.SetParent(_transform);
 			
 			return obj;
 		}

@@ -1,5 +1,5 @@
 {
-    "name": "NewAssembly",
+    "name": "com.voidling.utilities",
     "rootNamespace": "voidling.utility",
     "references": [],
     "includePlatforms": [],
